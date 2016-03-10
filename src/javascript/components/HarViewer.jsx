@@ -34,7 +34,7 @@ export default class HarViewer extends React.Component {
         });
 
         return(
-            <Grid fluid={false}>
+            <Grid>
                 <Row>
                     <Col sm={12}>
                         <PageHeader>Har Viewer</PageHeader>
@@ -67,13 +67,18 @@ export default class HarViewer extends React.Component {
                     </Col>
 
                     <Col sm={4}>
-                        Input
+                        <Input type="search"
+                               placeholder="Search Url"
+                               bsSize="small"
+                               onChange={this._filterTextChanged.bind(this)}
+                               ref="filterText"/>
                     </Col>
                 </Row>
 
                 <Row>
                     <Col sm={12}>
-                        <Table rowsCount={this.props.entries.length}
+                        <Table refs="entriesTable"
+                               rowsCount={this.props.entries.length}
                                width={this.state.tableWidth}
                                headerHeight={30}
                                height={this.state.tableHeight}
@@ -150,6 +155,10 @@ export default class HarViewer extends React.Component {
     }
 
     _filterRequested(type, event) {
+
+    }
+
+    _filterTextChanged() {
 
     }
 }
