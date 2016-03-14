@@ -14,7 +14,7 @@ export default class HarEntryTable extends React.Component {
         super();
         this.state = {
             columnWidths: {
-                url: 500,
+                url: 600,
                 size: 100,
                 time: 200
             },
@@ -113,8 +113,8 @@ export default class HarEntryTable extends React.Component {
         var sortClass = dir ? classMap[dir] : '';
 
         return (
-            <Cell>
-                <div className="text-primary sortable" onClick={this._columnClicked.bind(this, columnKey)}>
+            <Cell onClick={this._columnClicked.bind(this, columnKey)}>
+                <div className="text-primary sortable">
                     <strong>{columnKey}</strong>
                     &nbsp;
                     <i className={sortClass}/>
