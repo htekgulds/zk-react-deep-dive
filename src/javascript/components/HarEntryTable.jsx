@@ -18,6 +18,11 @@ export default class HarEntryTable extends React.Component {
                 size: 100,
                 time: 200
             },
+            sortDirection: {
+                url: null,
+                size: null,
+                time: null
+            },
             tableWidth: 1000,
             tableHeight: 500,
             isColumnResizing: false
@@ -100,21 +105,43 @@ export default class HarEntryTable extends React.Component {
     // Table Sorting
     //---------------------------------------
     _renderHeader({columnKey}) {
-        var sortClass = 'glyphicon glyphicon-sort-by-attributes';
+        var dir = this.state.sortDirection[columnKey],
+            classMap = {
+                asc: 'glyphicon glyphicon-sort-by-attributes',
+                desc: 'glyphicon glyphicon-sort-by-attributes-alt'
+            };
+        var sortClass = dir ? classMap[dir] : '';
+
         return (
-            <div className="text-primary sortable" onClick={this._columnClicked.bind(this, columnKey)}>
-                <strong>{columnKey}</strong>
-                &nbsp;
-                <i className={sortClass} />
-            </div>
+            <Cell>
+                <div className="text-primary sortable" onClick={this._columnClicked.bind(this, columnKey)}>
+                    <strong>{columnKey}</strong>
+                    &nbsp;
+                    <i className={sortClass}/>
+                </div>
+            </Cell>
         );
     }
 
-    _columnClicked(dataKey) {
-        var dir = 'asc';
+    _columnClicked(columnKey) {
+        var sortDirections = this.state.sortDirection,
+            dir = sortDirections[columnKey];
+
+        if (dir === null) { dir = 'asc'; }
+        else if (dir === 'asc') { dir = 'desc'; }
+        else if (dir === 'desc') { dir = null; }
+
+        _.each(_.keys(sortDirections), x => {
+            sortDirections[x] = null;
+        });
+        sortDirections[columnKey] = dir;
+
+        this.setState({
+            sortDirection: sortDirections
+        });
 
         if (this.props.onColumnSort) {
-            this.props.onColumnSort(dataKey, dir);
+            this.props.onColumnSort(columnKey, dir);
         }
     }
 }
