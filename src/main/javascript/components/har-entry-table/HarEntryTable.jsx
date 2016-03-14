@@ -3,10 +3,18 @@ require('./_har-entry-table.scss')
 
 import React from 'react';
 import DOM from 'react-dom';
+import d3 from 'd3';
 
 import FixedDataTable from 'fixed-data-table';
+import TimeBar from '../timebar/TimeBar.jsx';
+
 const {Table, Column, Cell} = FixedDataTable;
 const GutterWidth = 30;
+const headers = {
+    url: "URL",
+    size: "Size",
+    time: "Timeline"
+};
 
 export default class HarEntryTable extends React.Component {
 
@@ -34,9 +42,9 @@ export default class HarEntryTable extends React.Component {
             <Table ref="entriesTable"
                    rowsCount={this.props.entries.length}
                    width={this.state.tableWidth}
-                   headerHeight={30}
+                   headerHeight={40}
                    height={this.state.tableHeight}
-                   rowHeight={30}
+                   rowHeight={40}
                    isColumnResizing={this.state.isColumnResizing}
                    onColumnResizeEndCallback={this._onColumnResized.bind(this)}>
 
@@ -55,7 +63,7 @@ export default class HarEntryTable extends React.Component {
                         width={this.state.columnWidths.time}
                         isResizable={true}
                         minWidth={200}
-                        cell={this._getCell.bind(this)}
+                        cell={this._getTimelineCell.bind(this)}
                         header={this._renderHeader.bind(this)} />
             </Table>
         );
@@ -63,8 +71,38 @@ export default class HarEntryTable extends React.Component {
 
     _getCell({columnKey, rowIndex}) {
         return (
-            <Cell>{this._readKey(columnKey, this.props.entries[rowIndex])}</Cell>
+            <div className="entry-table-row"><Cell>{this._readKey(columnKey, this.props.entries[rowIndex])}</Cell></div>
         );
+    }
+
+    _getTimelineCell({columnkey, rowIndex}) {
+        var rowData = this.props.entries[rowIndex];
+        var start = rowData.time.start,
+            total = rowData.time.total,
+            pgTimings = this.props.page.pageTimings,
+            scale = this._prepareScale(this.props.entries, this.props.page);
+
+        return (
+            <TimeBar scale={scale}
+                     start={start}
+                     total={total}
+                     timings={rowData.time.details}
+                     domContentLoad={pgTimings.onContentLoad}
+                     pageLoad={pgTimings.onLoad} />
+        );
+    }
+
+    _prepareScale(entries, page) {
+        var startTime = 0,
+            lastEntry = _.last(entries),
+            endTime = lastEntry.time.start + lastEntry.time.total,
+            maxTime = Math.max(endTime, page.pageTimings.onLoad);
+
+        var scale = d3.scale.linear()
+                .domain([startTime, Math.ceil(maxTime)])
+                .range([0, 100]);
+
+        return scale;
     }
 
     _readKey(key, entry) {
@@ -113,13 +151,13 @@ export default class HarEntryTable extends React.Component {
         var sortClass = dir ? classMap[dir] : '';
 
         return (
-            <Cell onClick={this._columnClicked.bind(this, columnKey)}>
-                <div className="text-primary sortable">
-                    <strong>{columnKey}</strong>
+            <div className="text-primary sortable" onClick={this._columnClicked.bind(this, columnKey)}>
+                <Cell>
+                    <strong>{headers[columnKey]}</strong>
                     &nbsp;
                     <i className={sortClass}/>
-                </div>
-            </Cell>
+                </Cell>
+            </div>
         );
     }
 
@@ -148,10 +186,12 @@ export default class HarEntryTable extends React.Component {
 
 HarEntryTable.defaultProps = {
     entries: [],
+    page: null,
     onColumnSort: null
 };
 
 HarEntryTable.propTypes = {
     entries: React.PropTypes.array,
+    page: React.PropTypes.object,
     onColumnSort: React.PropTypes.func
 };

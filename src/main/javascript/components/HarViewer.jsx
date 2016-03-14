@@ -72,7 +72,9 @@ export default class HarViewer extends React.Component {
             <Grid fluid>
                 <Row>
                     <Col sm={12}>
-                        <HarEntryTable entries={entries} onColumnSort={this._onColumnSort.bind(this)}/>
+                        <HarEntryTable entries={entries}
+                                       onColumnSort={this._onColumnSort.bind(this)}
+                                       page={currentPage} />
                     </Col>
                 </Row>
             </Grid>
