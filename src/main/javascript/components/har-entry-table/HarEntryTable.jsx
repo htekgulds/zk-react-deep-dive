@@ -7,6 +7,8 @@ import d3 from 'd3';
 
 import FixedDataTable from 'fixed-data-table';
 import TimeBar from '../timebar/TimeBar.jsx';
+import FileType from '../file-type/FileType.jsx';
+import formatter from '../../core/formatter';
 
 const {Table, Column, Cell} = FixedDataTable;
 const GutterWidth = 30;
@@ -52,12 +54,12 @@ export default class HarEntryTable extends React.Component {
                         width={this.state.columnWidths.url}
                         isResizable={true}
                         header={this._renderHeader.bind(this)}
-                        cell={this._getCell.bind(this)}
+                        cell={this._getUrlCell.bind(this)}
                         flexGrow={null}/>
                 <Column columnKey="size"
                         width={this.state.columnWidths.size}
                         isResizable={true}
-                        cell={this._getCell.bind(this)}
+                        cell={this._getSizeCell.bind(this)}
                         header={this._renderHeader.bind(this)} />
                 <Column columnKey="time"
                         width={this.state.columnWidths.time}
@@ -69,13 +71,19 @@ export default class HarEntryTable extends React.Component {
         );
     }
 
-    _getCell({columnKey, rowIndex}) {
+    _getUrlCell({rowIndex}) {
         return (
-            <div className="entry-table-row"><Cell>{this._readKey(columnKey, this.props.entries[rowIndex])}</Cell></div>
+            <Cell className="entry-table-row"><FileType url={this.props.entries[rowIndex].request.url} type={this.props.entries[rowIndex].type} /></Cell>
         );
     }
 
-    _getTimelineCell({columnkey, rowIndex}) {
+    _getSizeCell({rowIndex}) {
+        return (
+            <Cell><span className="entry-table-row">{formatter.fileSize(this.props.entries[rowIndex].size)}</span></Cell>
+        );
+    }
+
+    _getTimelineCell({rowIndex}) {
         var rowData = this.props.entries[rowIndex];
         var start = rowData.time.start,
             total = rowData.time.total,
@@ -103,16 +111,6 @@ export default class HarEntryTable extends React.Component {
                 .range([0, 100]);
 
         return scale;
-    }
-
-    _readKey(key, entry) {
-        var keyMap = {
-            url: 'request.url',
-            time: 'time.start'
-        };
-
-        key = keyMap[key] || key;
-        return _.get(entry, key);
     }
 
     _onColumnResized(newColumnWidth, dataKey) {
@@ -153,7 +151,7 @@ export default class HarEntryTable extends React.Component {
         return (
             <div className="text-primary sortable" onClick={this._columnClicked.bind(this, columnKey)}>
                 <Cell>
-                    <strong>{headers[columnKey]}</strong>
+                    <strong>{_.toUpper(headers[columnKey])}</strong>
                     &nbsp;
                     <i className={sortClass}/>
                 </Cell>

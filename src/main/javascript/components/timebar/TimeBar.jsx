@@ -4,6 +4,8 @@ import React from 'react';
 import DOM from 'react-dom';
 import formatter from '../../core/formatter';
 import {Cell} from 'fixed-data-table';
+import {Popover, OverlayTrigger} from 'react-bootstrap';
+import TimingDetails from './TimingDetails.jsx';
 
 const PropTypes = React.PropTypes;
 
@@ -56,11 +58,27 @@ export default class TimeBar extends React.Component {
                 })
                 .value();
 
+        var overlay = (
+            <Popover id="popup" title={`Timing Details, started at: ${formatter.time(this.props.start)}`} >
+
+                <TimingDetails timings={this.props.timings}
+                               start={this.props.start}
+                               total={this.props.total} />
+            </Popover>
+        );
+
         return(
-            <div className="timebar">
-                {barElements}
-                <Cell>{label}</Cell>
-            </div>
+            <OverlayTrigger trigger={['hover', 'focus']}
+                            placement="left"
+                            delay={0}
+                            overlay={overlay} >
+
+                <div className="timebar">
+                    {barElements}
+                    <Cell>{label}</Cell>
+                </div>
+
+            </OverlayTrigger>
         );
     }
 }
