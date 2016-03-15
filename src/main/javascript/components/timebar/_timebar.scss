@@ -1,10 +1,12 @@
-$timebar-color: rgba(90, 230, 102, 0.55);
-$container-height: 30px;
-$bar-height: 18px;
+$timebar-color: #5ae666;
+$container-height: 40px;
+$bar-height: 20px;
 
 .timebar {
   height: $bar-height;
   position: relative;
+  color: #444;
+  font-size: .7em;
 
   .timebar-label {
     font-size: 1rem;
@@ -21,8 +23,10 @@ $bar-height: 18px;
     height: 100%;
   }
   .timebar-mark-time {
+    opacity: .6;
     background: linear-gradient($timebar-color, darken($timebar-color, 20%));
     border: 1px solid darken($timebar-color, 20%);
+    top: ($container-height - $bar-height) / 2;
   }
 
   .timebar-mark-contentLoad {
