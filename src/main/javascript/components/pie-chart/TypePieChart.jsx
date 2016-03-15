@@ -47,7 +47,7 @@ export default class TypePieChart extends React.Component {
                 width: this.state.width,
                 height: this.state.height
             };
-        chartBuilder(groups, DOM.getDOMNode(this.refs.container), config);
+        chartBuilder(groups, DOM.findDOMNode(this.refs.container), config);
     }
 
     _getEntriesByGroup(entries) {

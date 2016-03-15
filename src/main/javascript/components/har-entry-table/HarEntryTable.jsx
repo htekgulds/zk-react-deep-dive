@@ -25,8 +25,8 @@ export default class HarEntryTable extends React.Component {
         this.state = {
             columnWidths: {
                 url: 600,
-                size: 100,
-                time: 200
+                size: 160,
+                time: 400
             },
             sortDirection: {
                 url: null,
@@ -52,10 +52,10 @@ export default class HarEntryTable extends React.Component {
 
                 <Column columnKey="url"
                         width={this.state.columnWidths.url}
-                        isResizable={true}
+                        isResizable={false}
                         header={this._renderHeader.bind(this)}
                         cell={this._getUrlCell.bind(this)}
-                        flexGrow={null}/>
+                        flexGrow={1}/>
                 <Column columnKey="size"
                         width={this.state.columnWidths.size}
                         isResizable={true}
@@ -64,7 +64,7 @@ export default class HarEntryTable extends React.Component {
                 <Column columnKey="time"
                         width={this.state.columnWidths.time}
                         isResizable={true}
-                        minWidth={200}
+                        minWidth={400}
                         cell={this._getTimelineCell.bind(this)}
                         header={this._renderHeader.bind(this)} />
             </Table>

@@ -4,12 +4,13 @@ require('../samples');
 import React from 'react';
 import DOM from 'react-dom';
 import _ from 'lodash';
-import {Grid, Row, Col, PageHeader, Button, ButtonGroup, Input, Alert} from 'react-bootstrap';
+import {Grid, Row, Col, PageHeader, Button, ButtonGroup, Input, Alert, Well} from 'react-bootstrap';
 import mimeTypes from '../core/mime-types.js';
 
 import HarEntryTable from './har-entry-table/HarEntryTable.jsx';
 import SampleSelector from './SampleSelector.jsx';
 import FilterBar from './FilterBar.jsx';
+import TypePieChart from './pie-chart/TypePieChart.jsx';
 import harParser from '../core/har-parser';
 
 export default class HarViewer extends React.Component {
@@ -44,7 +45,7 @@ export default class HarViewer extends React.Component {
     _renderEmptyViewer() {
 
         return (
-            <Grid fluid>
+            <Grid>
                 <Row>
                     <Col sm={12}>
                         <p></p>
@@ -69,7 +70,16 @@ export default class HarViewer extends React.Component {
             entries = this._sortEntriesByKey(this.state.sortKey, this.state.sortDirection, filteredEntries);
 
         return (
-            <Grid fluid>
+            <Grid>
+
+                <Row>
+                    <Col sm={4}>
+                        <Well><TypePieChart entries={currentPage.entries} /></Well>
+                    </Col>
+                </Row>
+
+                <FilterBar onChange={this._onFilterChanged.bind(this)}
+                           onFilterTextChange={this._onFilterTextChanged.bind(this)} />
                 <Row>
                     <Col sm={12}>
                         <HarEntryTable entries={entries}
@@ -84,7 +94,7 @@ export default class HarViewer extends React.Component {
     _renderHeader() {
 
         return (
-            <Grid fluid>
+            <Grid>
                 <Row>
                     <Col sm={12}>
                         <PageHeader>Har Viewer</PageHeader>
@@ -96,14 +106,6 @@ export default class HarViewer extends React.Component {
                         <SampleSelector onSampleChanged={this._sampleChanged.bind(this)} />
                     </Col>
                 </Row>
-
-                <Row>
-                    <Col sm={12}>
-                        <p>Pie Chart</p>
-                    </Col>
-                </Row>
-
-                <FilterBar onChange={this._onFilterChanged.bind(this)} onFilterTextChange={this._onFilterTextChanged.bind(this)} />
             </Grid>
         );
     }
